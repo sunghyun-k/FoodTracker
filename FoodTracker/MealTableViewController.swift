@@ -14,6 +14,19 @@ class MealTableViewController: UITableViewController {
     
     var meals = [Meal]()
     
+    //MARK: 액션
+    
+    @IBAction func unwindToMealList(sender: UIStoryboardSegue) {
+        if let sourceViewController = sender.source as? MealViewController, let meal = sourceViewController.meal {
+            
+            // 새로운 meal을 추가합니다.
+            let newIndexPath = IndexPath(row: meals.count, section: 0)
+            
+            meals.append(meal)
+            tableView.insertRows(at: [newIndexPath], with: .automatic)
+        }
+    }
+    
     //MARK: 비공개 메소드
     
     private func loadSampleMeals() {
