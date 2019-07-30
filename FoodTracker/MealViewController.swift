@@ -30,6 +30,14 @@ class MealViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         // Text Field의 사용자 입력을 델리게이트 콜백을 통해 처리합니다.
         nameTextField.delegate = self
         
+        // 만약 존재하는 meal을 수정하는 것이라면 화면을 설정합니다.
+        if let meal = meal {
+            navigationItem.title = meal.name
+            nameTextField.text = meal.name
+            photoImageView.image = meal.photo
+            ratingControl.rating = meal.rating
+        }
+        
         // 텍스트 필드가 유효한 이름을 가지고 있을 때에만 저장 버튼을 활성화합니다.
         updateSaveButtonState()
     }
@@ -73,7 +81,17 @@ class MealViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     
     //MARK: 네비게이션
     @IBAction func cancel(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
+        
+        // 표시된 스타일(모달 또는 푸시 프레젠테이션)에 따라 이 뷰 컨트롤러는 두 가지 방법으로 사라집니다.
+        let isPresentingInAddMealMode = presentingViewController is UINavigationController
+        
+        if isPresentingInAddMealMode {
+            dismiss(animated: true, completion: nil)
+        } else if let owningNavigationController = navigationController {
+            owningNavigationController.popViewController(animated: true)
+        } else {
+            fatalError("MealViewController는 네비게이션 컨트롤러 내부에 있지 않습니다.")
+        }
     }
     
     // 이 메소드는 뷰 컨트롤러가 나타나기 전에 뷰 컨트롤러를 구성하도록 해줍니다.
