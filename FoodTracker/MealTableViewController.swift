@@ -31,29 +31,10 @@ class MealTableViewController: UITableViewController {
                 meals.append(meal)
                 tableView.insertRows(at: [newIndexPath], with: .automatic)
             }
+            
+            // meal을 저장합니다.
+            saveMeals()
         }
-    }
-    
-    //MARK: 비공개 메소드
-    
-    private func loadSampleMeals() {
-        let photo1 = UIImage(named: "meal1")
-        let photo2 = UIImage(named: "meal2")
-        let photo3 = UIImage(named: "meal3")
-        
-        guard let meal1 = Meal(name: "Caprese Salad", photo: photo1, rating: 4) else {
-            fatalError("meal1의 인스턴스화를 할 수 없습니다.")
-        }
-        
-        guard let meal2 = Meal(name: "Chicken and Potatoes", photo: photo2, rating: 5) else {
-            fatalError("meal2의 인스턴스화를 할 수 없습니다.")
-        }
-        
-        guard let meal3 = Meal(name: "Pasta with Meatballs", photo: photo3, rating: 3) else {
-            fatalError("meal3의 인스턴스화를 할 수 없습니다.")
-        }
-        
-        meals += [meal1, meal2, meal3]
     }
     
     override func viewDidLoad() {
@@ -62,8 +43,13 @@ class MealTableViewController: UITableViewController {
         // 테이블 뷰 컨트롤러가 제공하는 수정 버튼을 사용합니다.
         navigationItem.leftBarButtonItem = editButtonItem
         
-        // 샘플 데이터를 로드합니다.
-        loadSampleMeals()
+        // 저장된 meal을 로드합니다. 로드하지 못했다면 샘플 데이터를 로드합니다.
+        if let savedMeals = loadMeals() {
+            meals += savedMeals
+        } else {
+            // 샘플 데이터를 로드합니다.
+            loadSampleMeals()
+        }
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -117,6 +103,7 @@ class MealTableViewController: UITableViewController {
         if editingStyle == .delete {
             // Delete the row from the data source
             meals.remove(at: indexPath.row)
+            saveMeals()
             tableView.deleteRows(at: [indexPath], with: .fade)
         } else if editingStyle == .insert {
             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
@@ -170,5 +157,39 @@ class MealTableViewController: UITableViewController {
         }
     }
     
+    //MARK: 비공개 메소드
     
+    private func loadSampleMeals() {
+        let photo1 = UIImage(named: "meal1")
+        let photo2 = UIImage(named: "meal2")
+        let photo3 = UIImage(named: "meal3")
+        
+        guard let meal1 = Meal(name: "Caprese Salad", photo: photo1, rating: 4) else {
+            fatalError("meal1의 인스턴스화를 할 수 없습니다.")
+        }
+        
+        guard let meal2 = Meal(name: "Chicken and Potatoes", photo: photo2, rating: 5) else {
+            fatalError("meal2의 인스턴스화를 할 수 없습니다.")
+        }
+        
+        guard let meal3 = Meal(name: "Pasta with Meatballs", photo: photo3, rating: 3) else {
+            fatalError("meal3의 인스턴스화를 할 수 없습니다.")
+        }
+        
+        meals += [meal1, meal2, meal3]
+    }
+    
+    private func saveMeals() {
+        do {
+            let data = try NSKeyedArchiver.archivedData(withRootObject: meals, requiringSecureCoding: false)
+            try data.write(to: Meal.ArchiveURL)
+            os_log("Meal이 성공적으로 저장됨.", log: OSLog.default, type: .debug)
+        } catch {
+            os_log("Meal 저장에 실패함...", log: OSLog.default, type: .error)
+        }
+    }
+    
+    private func loadMeals() -> [Meal]? {
+            return try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(Data(contentsOf: Meal.ArchiveURL)) as? [Meal]
+    }
 }
