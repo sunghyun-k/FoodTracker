@@ -159,7 +159,7 @@ class MealTableViewController: UITableViewController {
     
     //MARK: 비공개 메소드
     
-    private func loadSampleMeals() {
+    @objc private func loadSampleMeals() {
         let photo1 = UIImage(named: "meal1")
         let photo2 = UIImage(named: "meal2")
         let photo3 = UIImage(named: "meal3")
