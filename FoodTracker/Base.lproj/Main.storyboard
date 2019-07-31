@@ -37,7 +37,7 @@
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Gjo-vm-qcm" customClass="RatingControl" customModule="FoodTracker" customModuleProvider="target">
+                                        <stackView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" fixedFrame="YES" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Gjo-vm-qcm" customClass="RatingControl" customModule="FoodTracker" customModuleProvider="target">
                                             <rect key="frame" x="98" y="40" width="252" height="39"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         </stackView>
