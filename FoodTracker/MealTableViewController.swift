@@ -41,7 +41,11 @@ class MealTableViewController: UITableViewController {
         super.viewDidLoad()
         
         // 테이블 뷰 컨트롤러가 제공하는 수정 버튼을 사용합니다.
-        navigationItem.leftBarButtonItem = editButtonItem
+        // navigationItem.leftBarButtonItem = editButtonItem
+        
+        let resetButton = UIBarButtonItem(title: "Reset", style: .plain, target: self, action: #selector(resetButtonTapped))
+        
+        navigationItem.leftBarButtonItems = [editButtonItem, resetButton]
         
         // 저장된 meal을 로드합니다. 로드하지 못했다면 샘플 데이터를 로드합니다.
         if let savedMeals = loadMeals() {
@@ -159,7 +163,7 @@ class MealTableViewController: UITableViewController {
     
     //MARK: 비공개 메소드
     
-    @objc private func loadSampleMeals() {
+    private func loadSampleMeals() {
         let photo1 = UIImage(named: "meal1")
         let photo2 = UIImage(named: "meal2")
         let photo3 = UIImage(named: "meal3")
@@ -190,6 +194,18 @@ class MealTableViewController: UITableViewController {
     }
     
     private func loadMeals() -> [Meal]? {
-            return try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(Data(contentsOf: Meal.ArchiveURL)) as? [Meal]
+        return try? NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(Data(contentsOf: Meal.ArchiveURL)) as? [Meal]
+    }
+    
+    @objc private func resetButtonTapped() {
+        let alertController = UIAlertController(title: nil, message: "All stored meals are removed and sample meals will be loaded.", preferredStyle: .actionSheet)
+        alertController.addAction(UIAlertAction(title: "Reset and Load Sample Meals", style: .destructive, handler: { (alertAction) in
+            self.meals.removeAll()
+            self.loadSampleMeals()
+            self.tableView.reloadData()
+            self.saveMeals()
+        } ))
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        present(alertController, animated: true, completion: nil)
     }
 }
